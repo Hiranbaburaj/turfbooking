@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turf/user/login_user1.dart';
 import 'package:turf/turfowner/login_owner.dart';
+import 'package:turf/user/signup_user.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,6 +34,16 @@ class HomePage extends StatelessWidget {
                   );
                 },
                 child: const Text('Login User'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserSignUp()),
+                  );
+                },
+                child: const Text('New User'),
               ),
               ElevatedButton(
                 onPressed: () {

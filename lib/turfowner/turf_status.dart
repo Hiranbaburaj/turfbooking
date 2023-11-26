@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:turf/turfowner/slot_create.dart';
 
 class TurfStatus extends StatefulWidget {
   final List<dynamic> owner;
@@ -17,13 +18,20 @@ class TurfStatus extends StatefulWidget {
 
 class _TurfStatusState extends State<TurfStatus> {
   String eMail = '';
+  int ownerId = 0; // Add this line
 
   @override
   void initState() {
     super.initState();
+    getOwnerInfo();
     getmailofOwner();
   }
 
+  Future<void> getOwnerInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    ownerId = prefs.getInt('ownerId') ?? 0; // Set a default value if not found
+    setState(() {});
+  }
 
   Future getmailofOwner() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,7 +39,7 @@ class _TurfStatusState extends State<TurfStatus> {
     setState(() {});
   }
 
-    Future<void> _logout() async {
+  Future<void> _logout() async {
     // * Clear SharedPreferences entry
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('email');
@@ -58,7 +66,6 @@ class _TurfStatusState extends State<TurfStatus> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // * Display owner details
             const Text(
               'Owner Details:',
@@ -168,33 +175,52 @@ class _TurfStatusState extends State<TurfStatus> {
                   ),
                 ],
               ),
+            // Button to navigate to the SlotMake page
+            ElevatedButton(
+              onPressed: () {
+                // ignore: avoid_print
+                print(ownerId);
+                // ignore: avoid_print
+                print(widget.turfData[0]['turf_name']);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SlotMake(
+                      ownerId: ownerId, // Pass ownerId to SlotMake
+                      turfData: widget.turfData,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Create Slot'),
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  // Function to get slots for a turf
-  Future<List<dynamic>> _getSlots(String turfId) async {
-    final supabase = Supabase.instance.client;
-    final response =
-        await supabase.from('slot').select().eq('turf_id', turfId).execute();
-    return response.data as List<dynamic>;
-  }
+// Function to get slots for a turf
+Future<List<dynamic>> _getSlots(String turfId) async {
+  final supabase = Supabase.instance.client;
+  final response =
+      await supabase.from('slot').select().eq('turf_id', turfId).execute();
+  return response.data as List<dynamic>;
+}
 
-  // Function to get booked tickets for a turf
-  Future<List<dynamic>> _getBookedTickets(String turfId) async {
-    final supabase = Supabase.instance.client;
-    final response =
-        await supabase.from('booking').select().eq('turf_id', turfId).execute();
-    return response.data as List<dynamic>;
-  }
+// Function to get booked tickets for a turf
+Future<List<dynamic>> _getBookedTickets(String turfId) async {
+  final supabase = Supabase.instance.client;
+  final response =
+      await supabase.from('booking').select().eq('turf_id', turfId).execute();
+  return response.data as List<dynamic>;
+}
 
-  // Function to get user details for a booked ticket
-  Future<Map<String, dynamic>> _getUserDetails(String userId) async {
-    final supabase = Supabase.instance.client;
-    final response =
-        await supabase.from('user').select().eq('id', userId).execute();
-    return response.data[0] as Map<String, dynamic>;
-  }
+// Function to get user details for a booked ticket
+Future<Map<String, dynamic>> _getUserDetails(String userId) async {
+  final supabase = Supabase.instance.client;
+  final response =
+      await supabase.from('user').select().eq('id', userId).execute();
+  return response.data[0] as Map<String, dynamic>;
 }

@@ -7,6 +7,7 @@ import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
 import 'package:turf/turfowner/login_owner.dart';
 import 'package:turf/turfowner/turf_status.dart';
+import 'package:turf/turfowner/slot_create.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; //* JOpYt3O99TQ6ZzyT
 
 Future<void> main() async {
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   get turfData => null;
   get selectedSlot => null;
   get owner => null;
+  get ownerId => null;
   
 @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/slot_empty'  :(context) => SlotIsEmpty(user: user, turfData: turfData, selectedSlot: selectedSlot),
         '/login_owner' :(context) => const LoginOwnerPage(),
         '/turf_status' :(context) => TurfStatus(owner: owner, turfData: turfData),
+        '/slot_create' :(context) => SlotMake(ownerId: ownerId, turfData: turfData),
       },
     );
   }

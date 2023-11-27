@@ -6,6 +6,7 @@ import 'package:turf/user/signup_user.dart';
 import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
 import 'package:turf/turfowner/login_owner.dart';
+import 'package:turf/turfowner/signup_owner.dart';
 import 'package:turf/turfowner/turf_status.dart';
 import 'package:turf/turfowner/slot_create.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; //* JOpYt3O99TQ6ZzyT
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/slot_select' :(context) => SlotSelection(user: user, turfData: turfData, selectedSlot: selectedSlot),
         '/slot_empty'  :(context) => SlotIsEmpty(user: user, turfData: turfData, selectedSlot: selectedSlot),
         '/login_owner' :(context) => const LoginOwnerPage(),
+        '/signup_owner' :(context) => const OwnerSignUp(),
         '/turf_status' :(context) => TurfStatus(owner: owner, turfData: turfData),
         '/slot_create' :(context) => SlotMake(ownerId: ownerId, turfData: turfData),
       },

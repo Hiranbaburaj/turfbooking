@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, avoid_print
+// ignore_for_file: unnecessary_null_comparison, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -163,7 +163,7 @@ class _SlotMakeState extends State<SlotMake> {
 
     final supabase = Supabase.instance.client;
 
-    // Convert time to 'HH:mm' format
+    // * Convert time to 'HH:mm' format
     final startingTimeString = DateFormat('HH:mm').format(
       DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _startingTime.hour, _startingTime.minute),
     );
@@ -172,7 +172,7 @@ class _SlotMakeState extends State<SlotMake> {
       DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _endingTime.hour, _endingTime.minute),
     );
 
-    // Insert into the 'slot' table
+    // * Insert into the 'slot' table
     final response = await supabase.from('slot').upsert([
       {
         'startingtime': startingTimeString,

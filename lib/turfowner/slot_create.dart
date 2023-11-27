@@ -8,7 +8,7 @@ class SlotMake extends StatefulWidget {
   final int ownerId;
   final List<dynamic> turfData;
 
-  SlotMake({required this.ownerId, required this.turfData});
+  const SlotMake({super.key, required this.ownerId, required this.turfData});
 
   @override
   _SlotMakeState createState() => _SlotMakeState();
@@ -20,6 +20,8 @@ class _SlotMakeState extends State<SlotMake> {
   late TimeOfDay _startingTime;
   late TimeOfDay _endingTime;
   int? _selectedTurfId;
+  TextEditingController startingTimeController = TextEditingController();
+  TextEditingController endingTimeController = TextEditingController();
 
   @override
   void initState() {
@@ -42,7 +44,6 @@ class _SlotMakeState extends State<SlotMake> {
           child: Column(
             children: [
               TextFormField(
-                readOnly: true,
                 onTap: () async {
                   final pickedDate = await showDatePicker(
                     context: context,
@@ -59,8 +60,11 @@ class _SlotMakeState extends State<SlotMake> {
                 decoration: const InputDecoration(
                   labelText: 'Select Date',
                 ),
+                controller: TextEditingController(
+                  text: DateFormat('yyyy-MM-dd').format(_selectedDate),
+                ),
                 validator: (value) {
-                  if (value == null) {
+                  if (value == null || value.isEmpty) {
                     return 'Please select a date';
                   }
                   return null;
@@ -68,6 +72,7 @@ class _SlotMakeState extends State<SlotMake> {
               ),
               TextFormField(
                 readOnly: true,
+                controller: startingTimeController,
                 onTap: () async {
                   final pickedTime = await showTimePicker(
                     context: context,
@@ -76,7 +81,16 @@ class _SlotMakeState extends State<SlotMake> {
                   if (pickedTime != null) {
                     setState(() {
                       _startingTime = pickedTime;
-                      _endingTime = pickedTime.replacing(hour: pickedTime.hour + 1);
+                      _endingTime =
+                          pickedTime.replacing(hour: pickedTime.hour + 1);
+
+                      // Format the time using DateFormat
+                      final startingTimeFormatted = DateFormat.Hm().format(
+                        DateTime(2023, 1, 1, _startingTime.hour,
+                            _startingTime.minute),
+                      );
+
+                      startingTimeController.text = startingTimeFormatted;
                     });
                   }
                 },
@@ -92,6 +106,7 @@ class _SlotMakeState extends State<SlotMake> {
               ),
               TextFormField(
                 readOnly: true,
+                controller: endingTimeController,
                 onTap: () async {
                   final pickedTime = await showTimePicker(
                     context: context,
@@ -100,6 +115,14 @@ class _SlotMakeState extends State<SlotMake> {
                   if (pickedTime != null) {
                     setState(() {
                       _endingTime = pickedTime;
+
+                      // Format the time using DateFormat
+                      final endingTimeFormatted = DateFormat.Hm().format(
+                        DateTime(
+                            2023, 1, 1, _endingTime.hour, _endingTime.minute),
+                      );
+
+                      endingTimeController.text = endingTimeFormatted;
                     });
                   }
                 },
@@ -165,36 +188,37 @@ class _SlotMakeState extends State<SlotMake> {
 
     // * Convert time to 'HH:mm' format
     final startingTimeString = DateFormat('HH:mm').format(
-      DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _startingTime.hour, _startingTime.minute),
+      DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day,
+          _startingTime.hour, _startingTime.minute),
     );
 
     final endingTimeString = DateFormat('HH:mm').format(
-      DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _endingTime.hour, _endingTime.minute),
+      DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day,
+          _endingTime.hour, _endingTime.minute),
     );
 
     // * Insert into the 'slot' table
-    final response = await supabase.from('slot').upsert([
-      {
-        'startingtime': startingTimeString,
-        'endingtime': endingTimeString,
-        'turf_id': _selectedTurfId,
-        'status': false,
-        'date': _selectedDate.toLocal().toString().split(' ')[0], // Extracting date in 'yyyy-MM-dd' format
-      },
-    ]).execute();
 
-    // if (response.error == null) {
-      // Slot creation successful
-      // Show success message
+    try {
+      final response = await supabase.from('slot').upsert([
+        {
+          'startingtime': startingTimeString,
+          'endingtime': endingTimeString,
+          'turf_id': _selectedTurfId,
+          'status': false,
+          'date': _selectedDate
+              .toLocal()
+              .toString()
+              .split(' ')[0], // Extracting date in 'yyyy-MM-dd' format
+        },
+      ]);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Slot booked successfully'),
         ),
       );
-    // } 
-    // else {
-    //   // Handle the error (display error message or take appropriate action)
-    //   print('Error creating slot: ${response.error?.message}');
-    // }
+    } catch (error) {
+      print('Error creating slot: $error');
+    }
   }
 }

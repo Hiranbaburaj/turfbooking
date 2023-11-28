@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turf/pages/homepage.dart';
 import 'package:turf/pages/turf_select.dart';
+import 'package:turf/turfowner/turf_create.dart';
 import 'package:turf/user/login_user1.dart';
 import 'package:turf/user/signup_user.dart';
 import 'package:turf/booking/slot_select.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/signup_owner' :(context) => const OwnerSignUp(),
         '/turf_status' :(context) => TurfStatus(owner: owner, turfData: turfData),
         '/slot_create' :(context) => SlotMake(ownerId: ownerId, turfData: turfData),
+        '/turf_create' :(context) => MakeTurf(ownerId: ownerId),
       },
     );
   }

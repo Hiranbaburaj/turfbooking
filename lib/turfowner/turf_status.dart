@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turf/turfowner/slot_create.dart';
+import 'package:turf/turfowner/turf_create.dart';
 
 class TurfStatus extends StatefulWidget {
   final List<dynamic> owner;
@@ -179,9 +180,7 @@ class _TurfStatusState extends State<TurfStatus> {
             ElevatedButton(
               onPressed: () {
                 // ignore: avoid_print
-                print(ownerId);
-                // ignore: avoid_print
-                print(widget.turfData[0]['turf_name']);
+                print(ownerId);        
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -193,6 +192,25 @@ class _TurfStatusState extends State<TurfStatus> {
                 );
               },
               child: const Text('Create Slot'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // ignore: avoid_print
+                print(ownerId);
+                // if (widget.turfData[0]['turf_name'] != null) {
+                //   // ignore: avoid_print
+                //   print(widget.turfData[0]['turf_name']);
+                // }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MakeTurf(
+                      ownerId: ownerId, // Pass ownerId to SlotMake
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Create new Turf'),
             ),
           ],
         ),

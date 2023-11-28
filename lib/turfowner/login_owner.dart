@@ -50,11 +50,13 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
 
   //* Save login information
   // * Make sure to call this function when you want to save the login information, such as after a successful login.
-  Future<void> saveLoginInfo(String email, String password, int ownerId) async {
+  Future<void> saveLoginInfo(String email, String password, int ownerId, String ownerFname, String ownerLname) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', email);
     prefs.setString('password', password);
     prefs.setInt('ownerId', ownerId);
+    prefs.setString('ownerFname', ownerFname);
+    prefs.setString('ownerLname', ownerLname);
   }
 
   Future<void> _login() async {
@@ -83,6 +85,12 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
         // * Extract owner ID from the response
         final ownerId = ownerResponse.data[0]['id'];
 
+        // * Extract owner FirstName from the response
+        final ownerFname = ownerResponse.data[0]['f_name'];
+
+        // * Extract owner FirstName from the response
+        final ownerLname = ownerResponse.data[0]['l_name'];
+
         // * Fetch turf information from the 'turf' table where 'owner_id' matches 'id' in 'turf_owner' table
         final turfResponse = await supabase
             .from('turf')
@@ -95,7 +103,7 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
         final turfData = turfResponse.data as List<dynamic>;
 
         // * Save login information using shared_preferences
-        await saveLoginInfo(email, password, ownerId);
+        await saveLoginInfo(email, password, ownerId, ownerFname, ownerLname);
 
         //* Successful login, navigate to homepage
 

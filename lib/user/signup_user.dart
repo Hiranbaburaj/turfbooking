@@ -22,7 +22,7 @@ class _UserSignUpState extends State<UserSignUp> {
   Future<void> _registerUser(BuildContext context) async {
     final supabase = Supabase.instance.client;
 
-    // Register the user with email and password
+    // * Register the user with email and password
     final response = await supabase.auth.signUp(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
@@ -30,37 +30,37 @@ class _UserSignUpState extends State<UserSignUp> {
 
     print(response);
 
-    // if (response.error == null) {
-    // If registration is successful, add user details to the 'user' table
-    final userResponse = await supabase.from('user').upsert([
-      {
-        'id': response.user!.id,
-        'fname': _firstNameController.text.trim(),
-        'lname': _lastNameController.text.trim(),
-        'age': _ageController.text.trim(),
-        'phone': _phoneController.text.trim(),
-        'email': _emailController.text.trim(),
-      },
-    ]).execute();
-
-    // if (userResponse.error == null) {
-    // After successful registration, navigate to the login page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginUserPage(),
-      ),
-    );
-    // } else {
-    //   // Handle error while adding user details to the 'user' table
-    //   // You may want to display an error message or take appropriate action
-    //   print('Error adding user details to the database: ${userResponse.error}');
-    // }
-    // } else {
-    //   // Handle registration error
-    //   // You may want to display an error message or take appropriate action
-    //   print('Error registering user: ${response.error}');
-    // }
+    try {
+      // *If registration is successful, add user details to the 'user' table
+      final userResponse = await supabase.from('user').upsert([
+        {
+          'id': response.user!.id,
+          'fname': _firstNameController.text.trim(),
+          'lname': _lastNameController.text.trim(),
+          'age': _ageController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'email': _emailController.text.trim(),
+        },
+      ]);
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User Registered successfully'),
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginUserPage(),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Falied to Register'),
+        ),
+      );
+      print('Error adding user details to the database: $error');
+    }
   }
 
   @override

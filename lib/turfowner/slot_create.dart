@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, avoid_print, library_private_types_in_public_api
+// ignore_for_file: unnecessary_null_comparison, avoid_print, library_private_types_in_public_api, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SlotMake extends StatefulWidget {
   final int ownerId;
   final List<dynamic> turfData;
-
   const SlotMake({super.key, required this.ownerId, required this.turfData});
 
   @override
@@ -32,7 +31,7 @@ class _SlotMakeState extends State<SlotMake> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Slot'),
@@ -49,7 +48,7 @@ class _SlotMakeState extends State<SlotMake> {
                     context: context,
                     initialDate: _selectedDate,
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(Duration(days: 365)),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
                   );
                   if (pickedDate != null) {
                     setState(() {
@@ -83,13 +82,11 @@ class _SlotMakeState extends State<SlotMake> {
                       _startingTime = pickedTime;
                       _endingTime =
                           pickedTime.replacing(hour: pickedTime.hour + 1);
-
-                      // Format the time using DateFormat
+                      // * Format the time using DateFormat
                       final startingTimeFormatted = DateFormat.Hm().format(
                         DateTime(2023, 1, 1, _startingTime.hour,
                             _startingTime.minute),
                       );
-
                       startingTimeController.text = startingTimeFormatted;
                     });
                   }
@@ -115,13 +112,11 @@ class _SlotMakeState extends State<SlotMake> {
                   if (pickedTime != null) {
                     setState(() {
                       _endingTime = pickedTime;
-
-                      // Format the time using DateFormat
+                      // * Format the time using DateFormat
                       final endingTimeFormatted = DateFormat.Hm().format(
                         DateTime(
                             2023, 1, 1, _endingTime.hour, _endingTime.minute),
                       );
-
                       endingTimeController.text = endingTimeFormatted;
                     });
                   }
@@ -213,8 +208,8 @@ class _SlotMakeState extends State<SlotMake> {
         },
       ]);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Slot booked successfully'),
+      const SnackBar(
+        content: Text('Slot booked successfully'),
         ),
       );
     } catch (error) {

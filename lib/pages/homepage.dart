@@ -19,8 +19,7 @@ class HomePage extends StatelessWidget {
               color: Colors.white, // Set text color to white
               fontSize: 24.0, // Set font size to 24.0
             ),
-          ),
-          backgroundColor: const Color(0xFF71DE95), // Use the specified color
+          ),// Use the specified color
         ),
         body: Center(
           child: Column(

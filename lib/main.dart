@@ -17,40 +17,79 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: 'https://lxcpligadiiloqwchlya.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Y3BsaWdhZGlpbG9xd2NobHlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAyNDgyMjksImV4cCI6MjAxNTgyNDIyOX0.oAgW6n84mP5zob01jHJfXmOPnd6W5QMfd31Z7wCJVsg',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Y3BsaWdhZGlpbG9xd2NobHlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAyNDgyMjksImV4cCI6MjAxNTgyNDIyOX0.oAgW6n84mP5zob01jHJfXmOPnd6W5QMfd31Z7wCJVsg',
   );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   get user => null;
   get turfData => null;
   get selectedSlot => null;
   get owner => null;
   get ownerId => null;
-  
-@override
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Turf",
+
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        appBarTheme: const AppBarTheme(
+          color: Colors.green, // Color for app bar
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // * Color for elevated button
+            foregroundColor: Colors.white, // * Color for text inside button
+            textStyle: const TextStyle( 
+              fontSize: 15,
+            ),
+          ),
+        ),
+        // Add more theme configurations as needed
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.green,
+        appBarTheme: const AppBarTheme(
+          color: Colors.green, // Color for app bar in dark mode
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // * Color for elevated button in dark mode
+            foregroundColor: Colors.white, // * Color for text inside button
+            textStyle: const TextStyle(
+            ),
+          ),
+        ),
+        // Add more dark mode theme configurations as needed
+      ),
+      // You can enable or disable dark mode based on user preference
+      themeMode: ThemeMode.system,
+
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/login_user1' :(context) => const LoginUserPage(),
-        '/signup_user' :(context) => const UserSignUp(),
-        '/turf_select' :(context) => TurfSelect(user: user, turfData: turfData),
-        '/slot_select' :(context) => SlotSelection(user: user, turfData: turfData, selectedSlot: selectedSlot),
-        '/slot_empty'  :(context) => SlotIsEmpty(user: user, turfData: turfData, selectedSlot: selectedSlot),
-        '/login_owner' :(context) => const LoginOwnerPage(),
-        '/signup_owner' :(context) => const OwnerSignUp(),
-        '/turf_status' :(context) => TurfStatus(owner: owner, turfData: turfData),
-        '/slot_create' :(context) => SlotMake(ownerId: ownerId, turfData: turfData),
-        '/turf_create' :(context) => MakeTurf(ownerId: ownerId),
+        '/login_user1': (context) => const LoginUserPage(),
+        '/signup_user': (context) => const UserSignUp(),
+        '/turf_select': (context) => TurfSelect(user: user, turfData: turfData),
+        '/slot_select': (context) => SlotSelection(
+            user: user, turfData: turfData, selectedSlot: selectedSlot),
+        '/slot_empty': (context) => SlotIsEmpty(
+            user: user, turfData: turfData, selectedSlot: selectedSlot),
+        '/login_owner': (context) => const LoginOwnerPage(),
+        '/signup_owner': (context) => const OwnerSignUp(),
+        '/turf_status': (context) =>
+            TurfStatus(owner: owner, turfData: turfData),
+        '/slot_create': (context) =>
+            SlotMake(ownerId: ownerId, turfData: turfData),
+        '/turf_create': (context) => MakeTurf(ownerId: ownerId),
       },
     );
   }
 }
-

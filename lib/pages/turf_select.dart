@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
@@ -9,7 +10,6 @@ import 'package:turf/booking/slot_empty.dart';
 class TurfSelect extends StatefulWidget {
   final List<dynamic> user;
   final List<dynamic> turfData;
-
   const TurfSelect({super.key, required this.user, required this.turfData});
 
   @override
@@ -57,7 +57,7 @@ class _TurfSelectState extends State<TurfSelect> {
             onPressed: () => _logout(context),
           ),
         ],
-        backgroundColor: const Color(0xFF71DE95),
+        // backgroundColor: const Color(0xFF71DE95),
       ),
       body: _selectedIndex ==
               0 // * Display available slots or booked slots based on the selected tab
@@ -200,9 +200,11 @@ class _TurfSelectState extends State<TurfSelect> {
                       children: [
                         ListTile(
                           title: FutureBuilder(
-                            future: _getTurfName(bookedSlot['turf_id'].toString()),
+                            future:
+                                _getTurfName(bookedSlot['turf_id'].toString()),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                                 return const CircularProgressIndicator();
                               } else if (snapshot.hasError) {
                                 return const Text('Error loading turf name');
@@ -215,19 +217,30 @@ class _TurfSelectState extends State<TurfSelect> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
                               FutureBuilder(
-                                future: _getSlotTiming(bookedSlot['slot_id'].toString()),
+                                future: _getSlotTiming(
+                                    bookedSlot['slot_id'].toString()),
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
-                                    return const Text('Error loading slot timing');
+                                    return const Text(
+                                        'Error loading slot timing');
                                   } else {
                                     final timing = snapshot.data as String;
                                     return Text('Timing: $timing');
                                   }
                                 },
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Add logic to cancel booking
+                                  _cancelBooking(
+                                      bookedSlot['slot_id'].toString(),
+                                      bookedSlot['id'].toString());
+                                },
+                                child: const Text('Cancel Booking'),
                               ),
                             ],
                           ),
@@ -240,6 +253,90 @@ class _TurfSelectState extends State<TurfSelect> {
         }
       },
     );
+  }
+
+  // * Function to cancel booking
+  Future<void> _cancelBooking(String slotId, String userID) async {
+    dynamic slotResponse;
+    dynamic updateSlotResponse;
+    dynamic deleteBookingResponse;
+    final supabase = Supabase.instance.client;
+    // * Get the slot information
+    try {
+      slotResponse =
+          await supabase.from('slot').select().eq('id', slotId).execute();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error fetching slot information'),
+        ),
+      );
+      return;
+    }
+
+    final slot = slotResponse.data![0];
+
+    // * Get the current time
+    final currentTime = DateTime.now();
+    // * Parse starting time from the slot information
+    final startingTime =
+        DateFormat('HH:mm').parse(slot['startingtime'].toString());
+
+    // * Check if the current time is less than 3 hours before starting time or event date is before the current date
+    if (DateTime.parse(slot['date'].toString()).isAfter(currentTime) ||
+        (DateTime.parse(slot['date'].toString())
+                .isAtSameMomentAs(currentTime) &&
+            currentTime
+                .isAfter(startingTime.subtract(const Duration(hours: 3))))) {
+      // * Set the status to false in the 'slot' table
+      try {
+        updateSlotResponse = await supabase
+            .from('slot')
+            .update({'status': false})
+            .eq('id', slotId)
+            .execute();
+
+        // * Delete the row in the 'booking' table
+        try {
+          deleteBookingResponse =
+              await supabase.from('booking').delete().eq('id', userID);
+
+          // * Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Booking successfully canceled'),
+            ),
+          );
+        } catch (error) {
+          // Handle error while deleting booking record
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error deleting booking record'),
+            ),
+          );
+        }
+      } catch (error) {
+        // Handle error while updating slot status
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error updating slot status'),
+          ),
+        );
+      }
+    } else {
+      // Unable to cancel booking
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to cancel booking'),
+        ),
+      );
+    }
+
+    // *Refresh the UI or update the booked slots list
+    setState(() {
+      // Call the function that fetches booked slots again
+      _getBookedSlots();
+    });
   }
 
   // * Function to format the date in "dd-mm-yyyy" format
@@ -282,21 +379,18 @@ class _TurfSelectState extends State<TurfSelect> {
   //* Function to get the turf name for a given turf id from the 'turf' table
   Future<String> _getTurfName(String turfId) async {
     final supabase = Supabase.instance.client;
-
     final response = await supabase
         .from('turf')
         .select('turf_name')
         .eq('id', turfId)
         .single()
         .execute();
-
     return response.data['turf_name'].toString();
   }
 
   //* Function to get the slot timing for a given slot id from the 'slot' table
   Future<String> _getSlotTiming(String slotId) async {
     final supabase = Supabase.instance.client;
-
     final response = await supabase
         .from('slot')
         .select('''startingtime, endingtime, date''')

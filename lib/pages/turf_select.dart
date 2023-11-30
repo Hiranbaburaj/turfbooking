@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class TurfSelect extends StatefulWidget {
   final List<dynamic> user;
@@ -146,17 +147,19 @@ class _TurfSelectState extends State<TurfSelect> {
                 } else {
                   final filteredTurfData = snapshot.data as List<dynamic>;
 
-                  return ListView.builder(
+                  return CarouselSlider.builder(
                     itemCount: filteredTurfData.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (context, index, realIndex) {
                       final turf = filteredTurfData[index];
                       return Column(
                         children: [
                           ListTile(
                             title: Text(
-                                '${turf['turf_name']} - ${turf['turf_location']}'),
+                              '${turf['turf_name']} - ${turf['turf_location']}',
+                            ),
                             subtitle: Text(
-                                'Owner: ${turf['owner_name']}, Phone: ${turf['turf_phone']}'),
+                              'Owner: ${turf['owner_name']}, Phone: ${turf['turf_phone']}',
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -167,6 +170,12 @@ class _TurfSelectState extends State<TurfSelect> {
                         ],
                       );
                     },
+                    options: CarouselOptions(
+                      aspectRatio: 2.0,
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      viewportFraction: 0.9,
+                    ),
                   );
                 }
               },

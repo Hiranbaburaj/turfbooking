@@ -38,6 +38,7 @@ dependencies:
   supabase_flutter: ^1.10.25
   shared_preferences: ^2.2.2
   intl: ^0.18.1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

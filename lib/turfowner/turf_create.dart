@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,6 +20,7 @@ class _MakeTurfState extends State<MakeTurf> {
   final TextEditingController _turfLocationController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _sportController = TextEditingController();
+  String? _imageUrl; // * Variable to store the image URL
   int? _selectedCityId;
 
   @override
@@ -45,7 +49,8 @@ class _MakeTurfState extends State<MakeTurf> {
               TextFormField(
                 controller: _turfLocationController,
                 maxLines: 3, // Increase the number of lines for the address
-                decoration: const InputDecoration(labelText: 'Turf Location (Address)'),
+                decoration:
+                    const InputDecoration(labelText: 'Turf Location (Address)'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the turf location';
@@ -98,7 +103,8 @@ class _MakeTurfState extends State<MakeTurf> {
                           _selectedCityId = value;
                         });
                       },
-                      decoration: const InputDecoration(labelText: 'Select City'),
+                      decoration:
+                          const InputDecoration(labelText: 'Select City'),
                       validator: (value) {
                         if (value == null) {
                           return 'Please select a city';
@@ -109,6 +115,14 @@ class _MakeTurfState extends State<MakeTurf> {
                   }
                 },
               ),
+              // * Button to upload image
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () async {
+                  await _uploadImage();
+                },
+                child: const Text('Upload Image'),
+              ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
@@ -116,7 +130,7 @@ class _MakeTurfState extends State<MakeTurf> {
                     await _createTurf();
                   }
                 },
-                child: const Text('Create'),
+                child: const Text('Create Turf'),
               ),
             ],
           ),
@@ -127,29 +141,84 @@ class _MakeTurfState extends State<MakeTurf> {
 
   Future<List<dynamic>> _getCityData() async {
     final supabase = Supabase.instance.client;
-    final response = await supabase.from('city').select('id, city_name').execute();
+    final response =
+        await supabase.from('city').select('id, city_name').execute();
     return response.data as List<dynamic>;
+  }
+
+  Future<void> _uploadImage() async {
+    final supabase = Supabase.instance.client;
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+
+      // try {
+      //   try {
+      var timevar = DateTime.now().millisecondsSinceEpoch;
+      String response = await supabase.storage.from('turfimages').upload(
+            'public/turf_$timevar.jpg',
+            imageFile,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+
+      // ignore: avoid_print
+      print(response);
+      // * Image upload successful, get the URL
+      String imageUrl =
+          supabase.storage.from('turfimages').getPublicUrl('public/turf_$timevar.jpg');
+          // supabase.storage.from('turfimages').getPublicUrl(response);
+      // ignore: avoid_print
+      print(imageUrl);
+//*
+//*
+      setState(() {
+        _imageUrl = imageUrl;
+      });
+      // * Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Image uploaded successfully'),
+        ),
+      );
+      //     } catch (error) {
+      //       // * Image upload failed, show an error message
+      //       ScaffoldMessenger.of(context).showSnackBar(
+      //         const SnackBar(
+      //           content: Text('Error uploading image'),
+      //         ),
+      //       );
+      //     }
+      //   } catch (error) {
+      //     // ignore: avoid_print
+      //     print('Error uploading image: $error');
+      //   }
+    }
   }
 
   Future<void> _createTurf() async {
     final supabase = Supabase.instance.client;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String ownerName = prefs.getString('ownerFname') ?? ' ${prefs.getString('ownerLname')}';
+    String ownerName =
+        prefs.getString('ownerFname') ?? ' ${prefs.getString('ownerLname')}';
 
     try {
-        final response = await supabase.from('turf').upsert([
-      {
-        'turf_name': _turfNameController.text,
-        'turf_location': _turfLocationController.text,
-        'owner_name': ownerName,
-        'turf_phone': _phoneNumberController.text,
-        'sport': _sportController.text,
-        'owner_id': widget.ownerId,
-        'city_id': _selectedCityId,
-      },
-        ]);
-            // Turf creation successful
+      final response = await supabase.from('turf').upsert([
+        {
+          'turf_name': _turfNameController.text,
+          'turf_location': _turfLocationController.text,
+          'owner_name': ownerName,
+          'turf_phone': _phoneNumberController.text,
+          'sport': _sportController.text,
+          'owner_id': widget.ownerId,
+          'city_id': _selectedCityId,
+          'image_url':
+              _imageUrl, // * Update the image_url column with the uploaded image URL
+        },
+      ]);
+      // Turf creation successful
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -158,11 +227,8 @@ class _MakeTurfState extends State<MakeTurf> {
       );
       // Navigate back to the previous page
       Navigator.pop(context);
-
-      } 
-      
-      catch (error) {
-           print('Error creating turf: $error ');
-      }
+    } catch (error) {
+      print('Error creating turf: $error ');
+    }
   }
 }

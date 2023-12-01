@@ -39,6 +39,12 @@ dependencies:
   shared_preferences: ^2.2.2
   intl: ^0.18.1
   carousel_slider: ^4.2.1
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/applogo.png"
 
 dev_dependencies:
   flutter_test:

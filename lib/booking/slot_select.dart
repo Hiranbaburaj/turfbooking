@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 
 class SlotSelection extends StatelessWidget {
   final List<dynamic> user;
@@ -44,32 +45,46 @@ class SlotSelection extends StatelessWidget {
                 itemCount: selectedSlot.length,
                 itemBuilder: (context, index) {
                   final slot = selectedSlot[index];
-                  final turfId = slot['turf_id'];
 
-                  //* Find the corresponding turf data based on turf_id
-                  final matchingTurf = turfData.firstWhere(
-                    (turf) => turf['id'] == turfId,
-                    orElse: () => null,
-                  );
+                  // Parse the slot date and time in IST (Indian Standard Time)
+                  final slotDateTime = DateFormat('yyyy-MM-dd HH:mm:ss')
+                      .parse('${slot['date']} ${slot['startingtime']} IST');
 
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                            convertDateFormat(slot['date'])),
-                        subtitle: Text(
-                            '${slot['startingtime']} - ${slot['endingtime']}'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          //* Insert a new row into the 'booking' table
-                          _bookSlot(context, matchingTurf['id'].toString(),
-                              slot['id'].toString(), user[0]['id'].toString());
-                        },
-                        child: const Text('Book Slot'),
-                      ),
-                    ],
-                  );
+                  // Check if the slot date is the current date or later in IST
+                  if (slotDateTime.isAfter(
+                      DateTime.now().toUtc().subtract(Duration(days: 1)))) {
+                    final turfId = slot['turf_id'];
+
+                    //* Find the corresponding turf data based on turf_id
+                    final matchingTurf = turfData.firstWhere(
+                      (turf) => turf['id'] == turfId,
+                      orElse: () => null,
+                    );
+
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(convertDateFormat(slot['date'])),
+                          subtitle: Text(
+                              '${slot['startingtime']} - ${slot['endingtime']}'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            //* Insert a new row into the 'booking' table
+                            _bookSlot(
+                                context,
+                                matchingTurf['id'].toString(),
+                                slot['id'].toString(),
+                                user[0]['id'].toString());
+                          },
+                          child: const Text('Book Slot'),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Return an empty container for slots on previous dates
+                    return Container();
+                  }
                 },
               ),
             ),
@@ -98,35 +113,30 @@ class SlotSelection extends StatelessWidget {
     print('Booking Slot - turfId: $turfId, slotId: $slotId, userId: $userId');
 
     //* Insert a new row into the 'booking' table
-    // ignore: unused_local_variable
-    final response = await supabase.from('booking').upsert([
-      {
-        'turf_id': turfId,
-        'slot_id': slotId,
-        'user_id': userId,
-      },
-      // ignore: deprecated_member_use
-    ]).execute();
-
-    await supabase.from('slot').update({'status': true}).match({'id': slotId});
-
-    // if (response.error == null) {
-    // Booking successful
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Slot booked successfully'),
-      ),
-    );
-    // } else {
-    //   // Handle error if needed
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('Error booking the slot'),
-    //     ),
-    //   );
-    // }
-
+    try {
+      // ignore: unused_local_variable
+      final response = await supabase.from('booking').upsert([
+        {
+          'turf_id': turfId,
+          'slot_id': slotId,
+          'user_id': userId,
+        },
+      ]);
+      await supabase
+          .from('slot')
+          .update({'status': true}).match({'id': slotId});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Slot booked successfully'),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error booking the slot'),
+        ),
+      );
+    }
     //* Returns to the turf_select page after booking
     // ignore: use_build_context_synchronously
     Navigator.pop(context);

@@ -45,6 +45,7 @@ class _TurfSelectState extends State<TurfSelect> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // * Disable Back button
         title: const Text(
           'Turf Select',
           style: TextStyle(
@@ -147,34 +148,59 @@ class _TurfSelectState extends State<TurfSelect> {
                 } else {
                   final filteredTurfData = snapshot.data as List<dynamic>;
 
-                  return CarouselSlider.builder(
-                    itemCount: filteredTurfData.length,
-                    itemBuilder: (context, index, realIndex) {
-                      final turf = filteredTurfData[index];
-                      return Column(
-                        children: [
-                          ListTile(
-                            title: Text(
-                              '${turf['turf_name']} - ${turf['turf_location']}',
-                            ),
-                            subtitle: Text(
-                              'Owner: ${turf['owner_name']}, Phone: ${turf['turf_phone']}',
+                  return SingleChildScrollView(
+                    child: CarouselSlider.builder(
+                      itemCount: filteredTurfData.length,
+                      itemBuilder: (context, index, realIndex) {
+                        final turf = filteredTurfData[index];
+                        final imageUrl = turf['image_url'];
+
+                        return InkWell(
+                          onTap: () {
+                            _slotselect(context, turf['id']);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${turf['turf_name']}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Owner: ${turf['owner_name']}',
+                                ),
+                                Text(
+                                  'Phone: ${turf['turf_phone']}',
+                                ),
+                                Text(
+                                  'Location: ${turf['turf_location']}',
+                                ),
+                                SizedBox(height: 8.0),
+                                Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  height:
+                                      150, // Set the desired height of the image
+                                  width: MediaQuery.of(context)
+                                      .size
+                                      .width, // Set the width to device width
+                                ),
+                              ],
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              _slotselect(context, turf['id']);
-                            },
-                            child: const Text('Book Slots Now'),
-                          ),
-                        ],
-                      );
-                    },
-                    options: CarouselOptions(
-                      aspectRatio: 2.0,
-                      enlargeCenterPage: true,
-                      autoPlay: true,
-                      viewportFraction: 0.9,
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: MediaQuery.of(context).size.height *
+                            0.5, // Adjust the height as needed
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                        autoPlay: true,
+                        viewportFraction: 1.0,
+                      ),
                     ),
                   );
                 }

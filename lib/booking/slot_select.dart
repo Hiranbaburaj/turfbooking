@@ -46,13 +46,13 @@ class SlotSelection extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final slot = selectedSlot[index];
 
-                  // Parse the slot date and time in IST (Indian Standard Time)
+                  // * Parse the slot date and time in IST (Indian Standard Time)
                   final slotDateTime = DateFormat('yyyy-MM-dd HH:mm:ss')
                       .parse('${slot['date']} ${slot['startingtime']} IST');
 
-                  // Check if the slot date is the current date or later in IST
+                  // * Check if the slot date is the current date or later in IST
                   if (slotDateTime.isAfter(
-                      DateTime.now().toUtc().subtract(Duration(days: 1)))) {
+                      DateTime.now().toUtc().subtract(const Duration(hours: 12)))) {
                     final turfId = slot['turf_id'];
 
                     //* Find the corresponding turf data based on turf_id

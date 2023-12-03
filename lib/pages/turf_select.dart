@@ -218,7 +218,7 @@ class _TurfSelectState extends State<TurfSelect> {
                                 width: 2,
                                 color: Theme.of(context).brightness ==
                                         Brightness.light
-                                    ? Colors.black
+                                    ? Colors.grey.shade600
                                     : const Color.fromARGB(255, 231, 231, 231),
                               ),
                             ),
@@ -231,17 +231,31 @@ class _TurfSelectState extends State<TurfSelect> {
                                 children: [
                                   Text(
                                     '${turf['turf_name']}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   Text(
                                     'Owner: ${turf['owner_name']}',
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   Text(
                                     'Phone: ${turf['turf_phone']}',
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   Text(
                                     'Location: ${turf['turf_location']}',
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   const SizedBox(height: 20.0),
                                   Image.network(
@@ -353,72 +367,74 @@ class _TurfSelectState extends State<TurfSelect> {
     );
   }
 
-  // * Function to cancel booking
   Future<void> _cancelBooking(String slotId, String userID) async {
-    dynamic slotResponse;
+    // Fetch slot information
     final supabase = Supabase.instance.client;
-    // * Get the slot information
     try {
-      slotResponse =
+      final slotResponse =
           await supabase.from('slot').select().eq('id', slotId).execute();
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error fetching slot information'),
-        ),
+      final slot = slotResponse.data![0];
+
+      // Current time and starting time
+      final currentTime = DateTime.now();
+      final startingTime = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day,
+        DateFormat('HH:mm').parse(slot['startingtime'].toString()).hour,
+        DateFormat('HH:mm').parse(slot['startingtime'].toString()).minute,
       );
-      return;
-    }
+      // * Check if cancellation is allowed
+      final isCancellable =
+          DateTime.parse(slot['date'].toString()).isAfter(currentTime) ||
+              (currentTime
+                  .isBefore(startingTime.subtract(const Duration(hours: 3))));
 
-    final slot = slotResponse.data![0];
-
-    // * Get the current time
-    final currentTime = DateTime.now();
-    // * Parse starting time from the slot information
-    final startingTime =
-        DateFormat('HH:mm').parse(slot['startingtime'].toString());
-
-    // * Check if the current time is less than 3 hours before starting time or event date is before the current date
-    if (DateTime.parse(slot['date'].toString()).isAfter(currentTime) ||
-        (DateTime.parse(slot['date'].toString())
-                .isAtSameMomentAs(currentTime) &&
-            currentTime
-                .isAfter(startingTime.subtract(const Duration(hours: 3))))) {
-      // * Set the status to false in the 'slot' table
-      try {
-        // * Delete the row in the 'booking' table
+      // * Proceed with cancellation if allowed
+      if (isCancellable) {
+        // Update slot status
         try {
-          // * Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Booking successfully canceled'),
-            ),
-          );
+          await supabase
+              .from('slot')
+              .update({'status': false})
+              .eq('id', slotId)
+              .execute();
+
+          // * Delete booking record
+          try {
+            await supabase.from('booking').delete().eq('id', userID).execute();
+
+            // Show success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Booking successfully canceled')),
+            );
+          } catch (error) {
+            // Handle error deleting booking record
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error deleting booking record')),
+            );
+          }
         } catch (error) {
-          // Handle error while deleting booking record
+          // Handle error updating slot status
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Error deleting booking record'),
-            ),
+            const SnackBar(content: Text('Error updating slot status')),
           );
         }
-      } catch (error) {
-        // Handle error while updating slot status
+      } else {
+        // Cancellation not allowed
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Error updating slot status'),
+            content: Text(
+                'Booking cannot be canceled within 3 hours of the starting time or if the event date has passed'),
           ),
         );
       }
-    } else {
-      // Unable to cancel booking
+    } catch (error) {
+      // Handle error fetching slot information
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to cancel booking'),
-        ),
+        const SnackBar(content: Text('Error fetching slot information')),
       );
     }
-
     // *Refresh the UI or update the booked slots list
     setState(() {
       // Call the function that fetches booked slots again
@@ -457,10 +473,40 @@ class _TurfSelectState extends State<TurfSelect> {
     final supabase = Supabase.instance.client;
     final userId = widget.user[0]['id'].toString();
 
+    // Get the current date
+    final currentDate = DateTime.now().toLocal();
+
     final response =
         await supabase.from('booking').select().eq('user_id', userId).execute();
 
-    return response.data as List<dynamic>;
+    // Filter the booked slots based on the date condition
+    final bookedSlots = response.data as List<dynamic>;
+    final filteredBookedSlots = <dynamic>[];
+
+    for (final bookedSlot in bookedSlots) {
+      // Retrieve the slot information to check the date
+      final slotId = bookedSlot['slot_id'].toString();
+      final slotDateResponse = await supabase
+          .from('slot')
+          .select()
+          .eq('id', slotId)
+          .gte('date', currentDate)
+          .execute();
+
+      if (slotDateResponse.data != null && slotDateResponse.data!.isNotEmpty) {
+        final bookedSlotResponse = await supabase
+            .from('booking')
+            .select()
+            .eq('slot_id', slotId)
+            .execute();
+
+        if (bookedSlotResponse.data != null) {
+          filteredBookedSlots.addAll(bookedSlotResponse.data!);
+        }
+      }
+    }
+
+    return filteredBookedSlots;
   }
 
   //* Function to get the turf name for a given turf id from the 'turf' table

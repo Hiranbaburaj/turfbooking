@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
-
-import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turf/turfowner/slot_create.dart';
@@ -11,7 +10,8 @@ class TurfStatus extends StatefulWidget {
   final List<dynamic> owner;
   final List<dynamic> turfData;
 
-  const TurfStatus({super.key, required this.owner, required this.turfData});
+  const TurfStatus({Key? key, required this.owner, required this.turfData})
+      : super(key: key);
 
   @override
   State<TurfStatus> createState() => _TurfStatusState();
@@ -19,7 +19,7 @@ class TurfStatus extends StatefulWidget {
 
 class _TurfStatusState extends State<TurfStatus> {
   String eMail = '';
-  int ownerId = 0; // Add this line
+  int ownerId = 0;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _TurfStatusState extends State<TurfStatus> {
 
   Future<void> getOwnerInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    ownerId = prefs.getInt('ownerId') ?? 0; // Set a default value if not found
+    ownerId = prefs.getInt('ownerId') ?? 0;
     setState(() {});
   }
 
@@ -41,12 +41,10 @@ class _TurfStatusState extends State<TurfStatus> {
   }
 
   Future<void> _logout() async {
-    // * Clear SharedPreferences entry
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('email');
     prefs.remove('password');
     prefs.remove('ownerId');
-    // * Navigate to the home page
     Navigator.pushReplacementNamed(context, '/');
   }
 
@@ -54,13 +52,89 @@ class _TurfStatusState extends State<TurfStatus> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Turf Status'),
-        actions: [
-          IconButton(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout),
+        iconTheme:
+            const IconThemeData(color: Colors.white), // * Drawer Button Color
+        title: const Text(
+          'Turf Status',
+          style: TextStyle(
+            color: Colors.white, // Set text color to white
+            fontSize: 20.0, // Set font size to 24.0
           ),
-        ],
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome ${widget.owner[0]['f_name']} ${widget.owner[0]['l_name']}!',
+                    style: GoogleFonts.raleway(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    eMail,
+                    style: GoogleFonts.raleway(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              title: const Text('Create Slot'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SlotMake(
+                      ownerId: ownerId,
+                      turfData: widget.turfData,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Create new Turf'),
+              onTap: () {
+                print(ownerId);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MakeTurf(
+                      ownerId: ownerId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text(
+                'Logout',
+                style: GoogleFonts.raleway(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+              leading: const Icon(
+                CupertinoIcons.arrow_left_to_line_alt,
+                size: 27,
+                semanticLabel: 'Logout',
+                color: Colors.red,
+              ),
+              onTap: _logout,
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,15 +142,6 @@ class _TurfStatusState extends State<TurfStatus> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // * Display owner details
-              const Text(
-                'Owner Details:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                  'Welcome ${widget.owner[0]['f_name']} ${widget.owner[0]['l_name']} $eMail'),
-              // Text('Last Name: ${widget.owner[0]['l_name']}'),
-
               for (final turf in widget.turfData)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,42 +263,6 @@ class _TurfStatusState extends State<TurfStatus> {
                     ),
                   ],
                 ),
-              // Button to navigate to the SlotMake page
-              ElevatedButton(
-                onPressed: () {
-                  // ignore: avoid_print
-                  print(ownerId);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SlotMake(
-                        ownerId: ownerId, // Pass ownerId to SlotMake
-                        turfData: widget.turfData,
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Create Slot'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // ignore: avoid_print
-                  print(ownerId);
-                  // if (widget.turfData[0]['turf_name'] != null) {
-                  //   // ignore: avoid_print
-                  //   print(widget.turfData[0]['turf_name']);
-                  // }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MakeTurf(
-                        ownerId: ownerId, // Pass ownerId to SlotMake
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Create new Turf'),
-              ),
             ],
           ),
         ),

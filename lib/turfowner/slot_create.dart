@@ -207,9 +207,10 @@ class _SlotMakeState extends State<SlotMake> {
               .split(' ')[0], // Extracting date in 'yyyy-MM-dd' format
         },
       ]);
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Slot booked successfully'),
+        content: Text('Slot created successfully'),
         ),
       );
     } catch (error) {

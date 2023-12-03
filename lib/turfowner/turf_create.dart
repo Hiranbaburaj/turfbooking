@@ -205,6 +205,7 @@ class _MakeTurfState extends State<MakeTurf> {
         prefs.getString('ownerFname') ?? ' ${prefs.getString('ownerLname')}';
 
     try {
+      // ignore: unused_local_variable
       final response = await supabase.from('turf').upsert([
         {
           'turf_name': _turfNameController.text,

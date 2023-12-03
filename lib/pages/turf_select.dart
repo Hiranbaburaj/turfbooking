@@ -20,7 +20,7 @@ class TurfSelect extends StatefulWidget {
 }
 
 class _TurfSelectState extends State<TurfSelect> {
-  int _selectedIndex = 0; // Index for the selected bottom navigation bar item
+  int _selectedIndex = 0; // * Index for the selected bottom navigation bar item
   late ScrollController _scrollController;
 
   @override
@@ -46,7 +46,7 @@ class _TurfSelectState extends State<TurfSelect> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // * Disable Back button
+        iconTheme: const IconThemeData(color: Colors.white), // * Drawer Button Color
         title: const Text(
           'Turf Select',
           style: TextStyle(
@@ -54,13 +54,6 @@ class _TurfSelectState extends State<TurfSelect> {
             fontSize: 20.0, // Set font size to 24.0
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () => _logout(context),
-          ),
-        ],
-        // backgroundColor: const Color(0xFF71DE95),
       ),
       body: _selectedIndex ==
               0 // * Display available slots or booked slots based on the selected tab
@@ -80,8 +73,34 @@ class _TurfSelectState extends State<TurfSelect> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome, ${widget.user[0]['fname']} ${widget.user[0]['lname']}!',
+                    style: GoogleFonts.raleway(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  // ... Add any other user information you want to display in the drawer header
+                ],
+              ),
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              onTap: () => _logout(context),
+            ),
+          ],
+        ),
+      ),
     );
   }
+  
 
   String? _selectedCityId;
   // * Function to build the view for available slots
@@ -303,8 +322,6 @@ class _TurfSelectState extends State<TurfSelect> {
   // * Function to cancel booking
   Future<void> _cancelBooking(String slotId, String userID) async {
     dynamic slotResponse;
-    dynamic updateSlotResponse;
-    dynamic deleteBookingResponse;
     final supabase = Supabase.instance.client;
     // * Get the slot information
     try {
@@ -335,17 +352,8 @@ class _TurfSelectState extends State<TurfSelect> {
                 .isAfter(startingTime.subtract(const Duration(hours: 3))))) {
       // * Set the status to false in the 'slot' table
       try {
-        updateSlotResponse = await supabase
-            .from('slot')
-            .update({'status': false})
-            .eq('id', slotId)
-            .execute();
-
         // * Delete the row in the 'booking' table
         try {
-          deleteBookingResponse =
-              await supabase.from('booking').delete().eq('id', userID);
-
           // * Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

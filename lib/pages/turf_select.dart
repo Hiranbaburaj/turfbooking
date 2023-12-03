@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TurfSelect extends StatefulWidget {
   final List<dynamic> user;
@@ -66,8 +67,6 @@ class _TurfSelectState extends State<TurfSelect> {
           ? _buildAvailableSlots() // * Function to build the available slots view
           : _buildBookedSlots(), // * Function to build the booked slots view
       bottomNavigationBar: BottomNavigationBar(
-        // Background color for the entire BottomNavigationBar
-        backgroundColor: const Color.fromARGB(255, 71, 222, 149),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.event_available),
@@ -79,10 +78,6 @@ class _TurfSelectState extends State<TurfSelect> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color.fromARGB(
-            255, 118, 81, 179), // Text and icon color when selected
-        unselectedItemColor:
-            Colors.white, // Text and icon color when unselected
         onTap: _onItemTapped,
       ),
     );
@@ -95,13 +90,16 @@ class _TurfSelectState extends State<TurfSelect> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 20), // * SizedBox
           Text(
             'Welcome, ${widget.user[0]['fname']} ${widget.user[0]['lname']}!',
-            style: const TextStyle(
+            style: GoogleFonts.raleway(
               fontSize: 20,
+              fontWeight: FontWeight.w500,
+              // * You can customize other text properties here, such as fontWeight, color, etc.
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 20), // * SizedBox
           const Text('Select City:'),
 
           // DropdownButton for selecting cities
@@ -137,6 +135,7 @@ class _TurfSelectState extends State<TurfSelect> {
             },
           ),
 
+          const SizedBox(height: 30), // * SizedBox
           Expanded(
             child: FutureBuilder(
               future: _getTurfsByCity(),
@@ -159,47 +158,58 @@ class _TurfSelectState extends State<TurfSelect> {
                           onTap: () {
                             _slotselect(context, turf['id']);
                           },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${turf['turf_name']}',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  'Owner: ${turf['owner_name']}',
-                                ),
-                                Text(
-                                  'Phone: ${turf['turf_phone']}',
-                                ),
-                                Text(
-                                  'Location: ${turf['turf_location']}',
-                                ),
-                                SizedBox(height: 8.0),
-                                Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  height:
-                                      150, // Set the desired height of the image
-                                  width: MediaQuery.of(context)
-                                      .size
-                                      .width, // Set the width to device width
-                                ),
-                              ],
+                          child: Material(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              side: BorderSide(
+                                width: 3,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.black
+                                    : const Color.fromARGB(255, 231, 231, 231),
+                              ),
+                            ),
+                            color: Colors.transparent,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${turf['turf_name']}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    'Owner: ${turf['owner_name']}',
+                                  ),
+                                  Text(
+                                    'Phone: ${turf['turf_phone']}',
+                                  ),
+                                  Text(
+                                    'Location: ${turf['turf_location']}',
+                                  ),
+                                  const SizedBox(height: 20.0),
+                                  Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    height: 150,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
                       },
                       options: CarouselOptions(
                         height: MediaQuery.of(context).size.height *
-                            0.5, // Adjust the height as needed
+                            0.38, // * Adjust the height as needed
                         aspectRatio: 2.0,
                         enlargeCenterPage: true,
                         autoPlay: true,
-                        viewportFraction: 1.0,
+                        viewportFraction: 0.75, // * Size of carousel
                       ),
                     ),
                   );

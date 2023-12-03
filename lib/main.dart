@@ -11,6 +11,7 @@ import 'package:turf/turfowner/signup_owner.dart';
 import 'package:turf/turfowner/turf_status.dart';
 import 'package:turf/turfowner/slot_create.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; //* JOpYt3O99TQ6ZzyT
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,33 +41,69 @@ class MyApp extends StatelessWidget {
 
       theme: ThemeData(
         primarySwatch: Colors.green,
-        appBarTheme: const AppBarTheme(
-          color: Colors.green, // Color for app bar
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, // * Color for elevated button
-            foregroundColor: Colors.white, // * Color for text inside button
-            textStyle: const TextStyle( 
-              fontSize: 15,
+        appBarTheme: AppBarTheme(
+          //* App Bar Theme
+          color: Colors.green, // * Color for app bar
+          titleTextStyle: GoogleFonts.raleway(
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // Color for elevated button
+            foregroundColor: Colors.white, // Color for text inside button
+            textStyle:
+                GoogleFonts.raleway(fontSize: 16), // Apply Raleway font to text
+          ),
+        ),
+
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors
+              .green, // * Background color for the entire BottomNavigationBar
+          selectedItemColor:
+              Colors.amberAccent, // * Text and icon color when selected
+          unselectedItemColor:
+              Colors.white, // *Text and icon color when unselected
+        ),
+        
         // Add more theme configurations as needed
       ),
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           color: Colors.green, // Color for app bar in dark mode
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, // * Color for elevated button in dark mode
-            foregroundColor: Colors.white, // * Color for text inside button
+          titleTextStyle: GoogleFonts.raleway(
             textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                Colors.green, // * Color for elevated button in dark mode
+            foregroundColor: Colors.white, // * Color for text inside button
+            textStyle:
+                GoogleFonts.raleway(fontSize: 16), // Apply Raleway font to text
+          ),
+        ),
+
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors
+              .green, // * Background color for the entire BottomNavigationBar
+          selectedItemColor:
+              Colors.amberAccent, // * Text and icon color when selected
+          unselectedItemColor:
+              Colors.white, // *Text and icon color when unselected
+        ),
+
         // Add more dark mode theme configurations as needed
       ),
       // You can enable or disable dark mode based on user preference

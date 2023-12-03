@@ -34,7 +34,6 @@ class SlotSelection extends StatelessWidget {
             fontSize: 20.0, // Set font size to 24.0
           ),
         ),
-        backgroundColor: const Color(0xFF71DE95),
       ),
       body: Center(
         child: Column(

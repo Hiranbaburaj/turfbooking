@@ -8,7 +8,7 @@ import 'package:turf/turfowner/turf_status.dart';
 
 class LoginOwnerPage extends StatefulWidget {
   const LoginOwnerPage({super.key});
-  
+
   @override
   _LoginOwnerPageState createState() => _LoginOwnerPageState();
 }
@@ -30,11 +30,22 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
             ),
+                  const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
@@ -50,7 +61,8 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
 
   //* Save login information
   // * Make sure to call this function when you want to save the login information, such as after a successful login.
-  Future<void> saveLoginInfo(String email, String password, int ownerId, String ownerFname, String ownerLname) async {
+  Future<void> saveLoginInfo(String email, String password, int ownerId,
+      String ownerFname, String ownerLname) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', email);
     prefs.setString('password', password);
@@ -81,7 +93,6 @@ class _LoginOwnerPageState extends State<LoginOwnerPage> {
 
       // * Check if owner information is available
       if (ownerResponse.data != null && ownerResponse.data.isNotEmpty) {
-
         // * Extract owner ID from the response
         final ownerId = ownerResponse.data[0]['id'];
 

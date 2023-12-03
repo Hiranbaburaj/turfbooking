@@ -42,8 +42,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
         appBarTheme: AppBarTheme(
-          //* App Bar Theme
-          color: Colors.green, // * Color for app bar
+          color: Colors.green,
           titleTextStyle: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.white,
@@ -52,31 +51,25 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, // Color for elevated button
-            foregroundColor: Colors.white, // Color for text inside button
-            textStyle:
-                GoogleFonts.raleway(fontSize: 16), // Apply Raleway font to text
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            textStyle: GoogleFonts.raleway(fontSize: 16),
           ),
         ),
-
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors
-              .green, // * Background color for the entire BottomNavigationBar
-          selectedItemColor:
-              Colors.amberAccent, // * Text and icon color when selected
-          unselectedItemColor:
-              Colors.white, // *Text and icon color when unselected
+          backgroundColor: Colors.green,
+          selectedItemColor: Colors.amberAccent,
+          unselectedItemColor: Colors.white,
         ),
-        
-        // Add more theme configurations as needed
+        scaffoldBackgroundColor:
+            Colors.grey.shade200, // Light grey background color
       ),
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
         appBarTheme: AppBarTheme(
-          color: Colors.green, // Color for app bar in dark mode
+          color: Colors.green,
           titleTextStyle: GoogleFonts.raleway(
             textStyle: const TextStyle(
               color: Colors.white,
@@ -87,25 +80,20 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                Colors.green, // * Color for elevated button in dark mode
-            foregroundColor: Colors.white, // * Color for text inside button
-            textStyle:
-                GoogleFonts.raleway(fontSize: 16), // Apply Raleway font to text
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            textStyle: GoogleFonts.raleway(fontSize: 16),
           ),
         ),
-
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors
-              .green, // * Background color for the entire BottomNavigationBar
-          selectedItemColor:
-              Colors.amberAccent, // * Text and icon color when selected
-          unselectedItemColor:
-              Colors.white, // *Text and icon color when unselected
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.green,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey.shade400,
         ),
-
-        // Add more dark mode theme configurations as needed
+        scaffoldBackgroundColor:
+            Colors.grey[900], // Dark grey background color
       ),
+
       // You can enable or disable dark mode based on user preference
       themeMode: ThemeMode.system,
 

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +9,8 @@ import 'package:turf/booking/slot_select.dart';
 import 'package:turf/booking/slot_empty.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 
 class TurfSelect extends StatefulWidget {
   final List<dynamic> user;
@@ -46,7 +49,8 @@ class _TurfSelectState extends State<TurfSelect> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white), // * Drawer Button Color
+        iconTheme:
+            const IconThemeData(color: Colors.white), // * Drawer Button Color
         title: const Text(
           'Turf Select',
           style: TextStyle(
@@ -59,19 +63,34 @@ class _TurfSelectState extends State<TurfSelect> {
               0 // * Display available slots or booked slots based on the selected tab
           ? _buildAvailableSlots() // * Function to build the available slots view
           : _buildBookedSlots(), // * Function to build the booked slots view
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_available),
-            label: 'Available Slots',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_busy),
-            label: 'Booked Slots',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      bottomNavigationBar: Theme(
+        data: Theme.of(context)
+            .copyWith(iconTheme: const IconThemeData(color: Colors.white)),
+        child: CurvedNavigationBar(
+          animationCurve: Curves.decelerate,
+          animationDuration: const Duration(milliseconds: 500),
+          color: Colors.green,
+          backgroundColor: Colors.transparent,
+          buttonBackgroundColor: Colors.red[300],
+          index: _selectedIndex,
+          height: 60.0,
+          items: [
+            CurvedNavigationBarItem(
+              child: const Icon(Icons.event_available, size: 30),
+              label: 'Available Turfs',
+              labelStyle:
+                  GoogleFonts.instrumentSans(color: Colors.white, fontSize: 13),
+            ),
+            CurvedNavigationBarItem(
+              child: const Icon(Icons.event_busy, size: 30),
+              label: 'Your Bookings',
+              labelStyle:
+                  GoogleFonts.instrumentSans(color: Colors.white, fontSize: 13),
+            ),
+          ],
+          iconPadding: 11,
+          onTap: _onItemTapped,
+        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -92,7 +111,22 @@ class _TurfSelectState extends State<TurfSelect> {
               ),
             ),
             ListTile(
-              title: const Text('Logout'),
+              title: Text(
+                'Logout',
+                style: GoogleFonts.raleway(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+              leading: const Icon(
+                CupertinoIcons.arrow_left_to_line_alt,
+                size: 27,
+                semanticLabel: 'Logout',
+                color: Colors.red, // Set the icon color to red
+              ),
               onTap: () => _logout(context),
             ),
           ],
@@ -100,7 +134,6 @@ class _TurfSelectState extends State<TurfSelect> {
       ),
     );
   }
-  
 
   String? _selectedCityId;
   // * Function to build the view for available slots
@@ -110,18 +143,8 @@ class _TurfSelectState extends State<TurfSelect> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 20), // * SizedBox
-          Text(
-            'Welcome, ${widget.user[0]['fname']} ${widget.user[0]['lname']}!',
-            style: GoogleFonts.raleway(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              // * You can customize other text properties here, such as fontWeight, color, etc.
-            ),
-          ),
-          const SizedBox(height: 20), // * SizedBox
-          const Text('Select City:'),
 
-          // DropdownButton for selecting cities
+          // * DropdownButton for selecting cities
           FutureBuilder(
             future:
                 _getCityData(), // Fetch available cities from the 'city' table
@@ -140,7 +163,13 @@ class _TurfSelectState extends State<TurfSelect> {
                     final cityId = city['id'].toString();
                     return DropdownMenuItem<String>(
                       value: cityId,
-                      child: Text(cityName),
+                      child: Text(
+                        cityName,
+                        style: GoogleFonts.barlowCondensed(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ), // * Apply Barlow Condensed font
+                      ),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -148,7 +177,12 @@ class _TurfSelectState extends State<TurfSelect> {
                       _selectedCityId = value;
                     });
                   },
-                  hint: const Text('Select City'), // Placeholder text
+                  hint: Text(
+                    'Select City',
+                    style: GoogleFonts.barlowCondensed(
+                      fontSize: 20,
+                    ), // * Apply Barlow Condensed font
+                  ),
                 );
               }
             },
@@ -181,7 +215,7 @@ class _TurfSelectState extends State<TurfSelect> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                               side: BorderSide(
-                                width: 3,
+                                width: 2,
                                 color: Theme.of(context).brightness ==
                                         Brightness.light
                                     ? Colors.black

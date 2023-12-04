@@ -29,62 +29,88 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Welcome to Turf Booking',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24.0,
-          ),
-        ),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginUserPage(),
-                  ),
-                );
-              },
-              child: const Text('Login User'),
+            const Text(
+              'Welcome to TurfBook',
+              style: TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UserSignUp(),
-                  ),
-                );
-              },
-              child: const Text('New User'),
+            const SizedBox(height: 20), // Add space between the heading and buttons
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginUserPage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Login User',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginOwnerPage(),
-                  ),
-                );
-              },
-              child: const Text('Login Owner'),
+            const SizedBox(height: 10), // Add space between the buttons
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserSignUp(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'New User',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const OwnerSignUp(),
-                  ),
-                );
-              },
-              child: const Text('New Owner'),
+            const SizedBox(height: 10), // Add space between the buttons
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginOwnerPage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Login Owner',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10), // Add space between the buttons
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const OwnerSignUp(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'New Owner',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           ],
         ),
@@ -92,4 +118,6 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
   

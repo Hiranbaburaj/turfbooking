@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turf/turfowner/slot_create.dart';
 import 'package:turf/turfowner/turf_create.dart';
+import 'package:turf/turfowner/turf_update.dart';
 
 class TurfStatus extends StatefulWidget {
   final List<dynamic> owner;
@@ -108,6 +109,20 @@ class _TurfStatusState extends State<TurfStatus> {
                   MaterialPageRoute(
                     builder: (context) => MakeTurf(
                       ownerId: ownerId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Update Turf Details'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TurfUpdate(
+                      ownerId: ownerId,
+                      turfData: widget.turfData,
                     ),
                   ),
                 );

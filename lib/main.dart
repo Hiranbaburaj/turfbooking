@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:turf/pages/homepage.dart';
 import 'package:turf/pages/turf_select.dart';
 import 'package:turf/turfowner/turf_create.dart';
+import 'package:turf/turfowner/turf_update.dart';
 import 'package:turf/user/login_user1.dart';
 import 'package:turf/user/past_bookings.dart';
 import 'package:turf/user/signup_user.dart';
@@ -92,8 +93,7 @@ class MyApp extends StatelessWidget {
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.grey.shade400,
         ),
-        scaffoldBackgroundColor:
-            Colors.grey[900], // Dark grey background color
+        scaffoldBackgroundColor: Colors.grey[900], // Dark grey background color
       ),
 
       // You can enable or disable dark mode based on user preference
@@ -118,6 +118,10 @@ class MyApp extends StatelessWidget {
         '/turf_create': (context) => MakeTurf(ownerId: ownerId),
         '/update_user': (context) => UserUpdateDetails(user: user),
         '/past_bookings': (context) => ViewPastBookings(user: user),
+        '/turf_update': (context) => TurfUpdate(
+              ownerId: ownerId,
+              turfData: turfData,
+            ),
       },
     );
   }

@@ -12,6 +12,7 @@ import 'package:turf/turfowner/turf_status.dart';
 import 'package:turf/turfowner/slot_create.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; //* JOpYt3O99TQ6ZzyT
 import 'package:google_fonts/google_fonts.dart';
+import 'package:turf/user/update_user.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -114,6 +115,7 @@ class MyApp extends StatelessWidget {
         '/slot_create': (context) =>
             SlotMake(ownerId: ownerId, turfData: turfData),
         '/turf_create': (context) => MakeTurf(ownerId: ownerId),
+        '/update_user': (context) => UserUpdateDetails(user: user),
       },
     );
   }

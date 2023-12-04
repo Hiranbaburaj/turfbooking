@@ -11,6 +11,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+import 'package:turf/user/update_user.dart';
 
 class TurfSelect extends StatefulWidget {
   final List<dynamic> user;
@@ -110,6 +111,32 @@ class _TurfSelectState extends State<TurfSelect> {
                 ],
               ),
             ),
+            ListTile(
+        title: Text(
+          'Update User Details',
+          style: GoogleFonts.raleway(
+            fontSize: 21,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+        ),
+        leading: const Icon(
+          CupertinoIcons.pencil,
+          size: 31,
+          semanticLabel: 'Update User Details',
+          color: Colors.blue, // Set the icon color to blue (or your preference)
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserUpdateDetails(user: widget.user),
+            ),
+          );
+        },
+      ),
             ListTile(
               title: Text(
                 'Logout',

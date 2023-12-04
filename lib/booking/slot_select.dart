@@ -158,6 +158,7 @@ class _SlotSelectionState extends State<SlotSelection> {
                     final turfId = slot['turf_id'];
 
                     //* Find the corresponding turf data based on turf_id
+                    // ignore: unused_local_variable
                     final matchingTurf = widget.turfData.firstWhere(
                       (turf) => turf['id'] == turfId,
                       orElse: () => null,

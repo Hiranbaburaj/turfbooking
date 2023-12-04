@@ -87,7 +87,23 @@ class _TurfStatusState extends State<TurfStatus> {
               ),
             ),
             ListTile(
-              title: const Text('Create Slot'),
+              title: Text(
+                'Create Slot',
+                style: GoogleFonts.raleway(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+              leading: const Icon(
+                CupertinoIcons.add,
+                size: 31,
+                semanticLabel: 'Create Slot',
+                color: Colors
+                    .green, // Set the icon color to green (or your preference)
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -101,7 +117,23 @@ class _TurfStatusState extends State<TurfStatus> {
               },
             ),
             ListTile(
-              title: const Text('Create new Turf'),
+              title: Text(
+                'Create New Turf',
+                style: GoogleFonts.raleway(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+              leading: const Icon(
+                CupertinoIcons.add_circled,
+                size: 31,
+                semanticLabel: 'Create New Turf',
+                color: Colors
+                    .orange, // Set the icon color to orange (or your preference)
+              ),
               onTap: () {
                 print(ownerId);
                 Navigator.push(
@@ -115,7 +147,23 @@ class _TurfStatusState extends State<TurfStatus> {
               },
             ),
             ListTile(
-              title: const Text('Update Turf Details'),
+              title: Text(
+                'Update Turf Details',
+                style: GoogleFonts.raleway(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+              leading: const Icon(
+                CupertinoIcons.pencil,
+                size: 31,
+                semanticLabel: 'View Past Bookings',
+                color: Colors
+                    .blue, // Set the icon color to purple (or your preference)
+              ),
               onTap: () {
                 Navigator.push(
                   context,

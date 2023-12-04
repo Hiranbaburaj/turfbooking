@@ -73,7 +73,7 @@ class _TurfSelectState extends State<TurfSelect> {
           animationDuration: const Duration(milliseconds: 500),
           color: Colors.green,
           backgroundColor: Colors.transparent,
-          buttonBackgroundColor: Colors.red[300],
+          buttonBackgroundColor: Colors.red[400],
           index: _selectedIndex,
           height: 60.0,
           items: [

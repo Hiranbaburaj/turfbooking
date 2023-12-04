@@ -5,17 +5,19 @@ import 'package:turf/turfowner/login_owner.dart';
 import 'package:turf/turfowner/signup_owner.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Turf Booking',
       theme: ThemeData.light(), // Light mode theme
       darkTheme: ThemeData.dark(), // Dark mode theme
-      home: HomePage(),
+      home: const HomePage(),
       debugShowCheckedModeBanner: false, // Disable the debug banner
     );
   }
@@ -90,3 +92,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+  

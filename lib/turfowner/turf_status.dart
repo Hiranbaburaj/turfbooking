@@ -10,8 +10,7 @@ class TurfStatus extends StatefulWidget {
   final List<dynamic> owner;
   final List<dynamic> turfData;
 
-  const TurfStatus({Key? key, required this.owner, required this.turfData})
-      : super(key: key);
+  const TurfStatus({super.key, required this.owner, required this.turfData});
 
   @override
   State<TurfStatus> createState() => _TurfStatusState();
